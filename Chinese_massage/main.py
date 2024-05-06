@@ -1,44 +1,98 @@
 '''
 Author: wds-dxh wdsnpshy@163.com
-Date: 2024-04-19 14:15:06
+Date: 2024-05-06 11:49:53
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-04-20 17:20:06
-FilePath: /Chinese_massage/Chinese_massage/main.py
+LastEditTime: 2024-05-06 11:59:35
+FilePath: \Chinese_massage\main.py
 Description: 
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
 Copyright (c) 2024 by ${wds-dxh}, All Rights Reserved. 
 '''
-from tool.getresult_img import get_landmarks
+import pyttsx3
+import time
 import cv2
+import os
+os.environ['YOLO_VERBOSE'] = str(False)#不打印yolov8信息
+from ultralytics import YOLO
+import numpy as np
 from tool import AipSpeech
-model_path = './tool/pose_landmarker_heavy.task'
+
+'''
+Author: wds-dxh wdsnpshy@163.com
+Date: 2024-05-06 11:58:41
+description: 语音识别，并判断有无穴位关键字，用于显示穴位推拿   
+param {*} name(穴位名称)
+return {*}
+'''
+#定义全局变量，传递穴位关键字
+acupoint = None
+say_eng = pyttsx3.init() #初始化一个实例
+say = True
+say_name1 = "穴位1，"
+say_name2 = "穴位2，"
+say_name3 = "穴位3，"
+def thread_function(name1,name2,name3):     #定义一个线程函数，用于语音识别。name是检测病人的症状，从而判需要按摩的穴位
+    global acupoint
+    #如果按下g键，调用语音识别
+    if cv2.waitKey(1) & 0xFF == ord("g"):
+        text = AipSpeech.thread_readvoice()
+        if name1 in text:
+            say_eng.say(say_name1)  # say 用于传递要说的文本的方法
+            say_eng.runAndWait()  # 运行并处理语音命令
+            acupoint = 1
+        if name2 in text:
+            say_eng.say(say_name2)
+            say_eng.runAndWait()
+            acupoint = 2
+        if name3 in text:
+            say_eng.say(say_name3)
+            say_eng.runAndWait()    
+            acupoint = 3
+    else:
+        acupoint = None
+        say_eng.say("未识别到穴位关键字")  # say 用于传递要说的文本的方法
+        say_eng.runAndWait()
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
+
+    # 加载YOLOv8模型
+    model = YOLO('./models/yolov8x-pose.pt')
+
+
+    start_time = time.time()
     cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    get_landmarks = get_landmarks(model_path = model_path)
-    while cap.isOpened():
-        success, image = cap.read()
-        # image = cv2.imread('IMG_5937.png')
-        #左右翻转
-        image = cv2.flip(image, 1)
+    while True:
+        # 读取视频流
+        ret, frame = cap.read()
+        # 在该帧上运行YOLOv8推理
+        frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
+        if frame is not None:
+            
+            results = model.predict(frame,conf=0.45,imgsz=(640, 480),max_det=3,save=False)
+            # 在帧上可视化结果
+            annotated_frame = results[0].plot()
+            
 
-        annotated_image, x_list, y_list = get_landmarks.get_result_image(image)
-        #画出第11,12,23,24个关键点，数据是归一化的。
-        if len(x_list) > 1 and len(y_list) > 1:
-            # print(x_list[0], y_list[0])
-            cv2.circle(image, (int(x_list[11]*width), int(y_list[11]*height)), 5, (255, 0, 0), -1)
-            cv2.circle(image, (int(x_list[12]*width), int(y_list[12]*height)), 5, (0, 0, 255), -1)
-            cv2.circle(image, (int(x_list[23]*width), int(y_list[23]*height)), 5, (255, 0, 0), -1)
-            cv2.circle(image, (int(x_list[24]*width), int(y_list[24]*height)), 5, (0, 0, 255), -1)
-        cv2.imshow('MediaPipe Pose', image)
-        if cv2.waitKey(1) & 0xFF == 27:#等待按键，如果按键为27则退出循环，1ms后继续下一次循环
+            # 计算FPS
+            fps = 1.0 / (time.time() - start_time)
+            cv2.putText(annotated_frame, f"{fps:.1f} FPS", (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            start_time = time.time()
+            cv2.imshow("YOLOv8推理", annotated_frame)
+
+            # 如果按下'q'则中断循环
+            if cv2.waitKey(1) & 0xFF == ord("q"):
+                break
+        else:
+            # 如果视频结束则中断循环
             break
-    cap.release()
-    cv2.destroyAllWindows()
 
+
+    cv2.destroyAllWindows()
