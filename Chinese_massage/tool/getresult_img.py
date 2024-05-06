@@ -2,8 +2,8 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-04-02 14:52:56
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-04-10 12:14:17
-FilePath: /Chinese_massage/mp_image.py
+LastEditTime: 2024-04-20 17:07:30
+FilePath: /Chinese_massage/Chinese_massage/tool/getresult_img.py
 Description: 
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
@@ -13,8 +13,7 @@ import time
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
-from draw_wds import draw_landmarks_on_image
-
+from tool.draw_wds import draw_landmarks_on_image
 class get_landmarks():
     #初始化，输入模型路径
     def __init__(self, model_path = './pose_landmarker_heavy.task'):
@@ -26,18 +25,36 @@ class get_landmarks():
         self.VisionRunningMode = mp.tasks.vision.RunningMode
         self.options = self.PoseLandmarkerOptions(
             base_options=self.BaseOptions(model_asset_path=self.model_path),
-            running_mode=self.VisionRunningMode.IMAGE)
+            running_mode=self.VisionRunningMode.IMAGE,
+            min_pose_detection_confidence=0.3)
         self.landmarker = self.PoseLandmarker.create_from_options(self.options)
 
     def get_result_landmarks(self, image):
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
         result = self.landmarker.detect(mp_image)
+        # print(result)
+        # print(result.pose_landmarks)
+        x_list = [] 
+        y_list = []
+        if len(result.pose_landmarks) > 0:
+            for landmark in result.pose_landmarks[0]:
+                x_list.append(landmark.x)
+                y_list.append(landmark.y)
+            return result, x_list, y_list
+        else:
+            x_list = []
+            y_list = []
+            return result, x_list, y_list
+    
+    def get_result(self, image):   #返回的是所有结果
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
+        result = self.landmarker.detect(mp_image)
         return result
     
     def get_result_image(self, image):
-        annotated_image = draw_landmarks_on_image(image, self.get_result_landmarks(image))
-        return annotated_image
-
+        result, x_list, y_list = self.get_result_landmarks(image)
+        annotated_image = draw_landmarks_on_image(image, result)
+        return annotated_image, x_list, y_list
 
 
 #测试是否能够正常运行
