@@ -2,8 +2,8 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-05-06 11:49:53
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-07 11:22:54
-FilePath: /Chinese_massage/Chinese_massage/main.py
+LastEditTime: 2024-05-11 14:12:59
+FilePath: /Chinese_massage/main.py
 Description: 使用YOLOv8模型检测人体关键点，用于穴位推拿，准确度很高。
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
@@ -74,6 +74,9 @@ def thread_function(name1,name2,name3):     #定义一个线程函数，用于�
             say_eng.runAndWait() 
             time.sleep(5)
             say_eng.stop()
+            #释放资源
+            say_eng.endLoop()
+
 
 
 if __name__ == '__main__':
@@ -82,7 +85,7 @@ if __name__ == '__main__':
     # thread_1.start()
     # thread_1.join()
     
-    # 加载YOLOv8模型
+    # 加载YOLOv8模型 
     model = YOLO('./models/yolov8m-pose.pt')
     start_time = time.time()
     url = "./test.mp4"
