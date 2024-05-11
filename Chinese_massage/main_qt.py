@@ -2,7 +2,7 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-05-11 14:16:06
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-11 15:26:43
+LastEditTime: 2024-05-11 15:57:19
 FilePath: /Chinese_massage/main_qt.py
 Description: 
 微信: 15310638214 
@@ -75,9 +75,11 @@ class MainWindow(QMainWindow):
         self.audio_thread.start()
 
     def audio_recognition_finished(self, acupoint):
+        self.acupoint = acupoint
         print("穴位关键字：", acupoint)
         # 处理语音识别完成后的逻辑
     def btn_camera_click(self):
+        print("self.acupoint",self.acupoint)
         if not self.is_open_camera: # 按下 打开摄像头 按钮
             self.video_cap = cv2.VideoCapture(0)  # 打开默认摄像头（索引为0）
             print('camera fps:', self.video_cap.get(cv2.CAP_PROP_FPS))
@@ -97,9 +99,11 @@ class MainWindow(QMainWindow):
     def play_camera_video(self):
         if self.is_open_camera:
             # ret, frame = self.video_cap.read()  # 读取视频流的每一帧
-            self.video_cap.grab()
-            _, frame = self.video_cap.retrieve()  # 读取视频流的每一帧
+            # self.video_cap.grab()   # 读取视频流的每一帧
+            _, frame = self.video_cap.read()  # 读取视频流的每一帧
             frame = Process_Audio.process_fram(self.medel,frame,self.acupoint)
+            # frame = Process_Audio.process_fram(self.medel,frame,1)
+            # print("SELF.ACUPONT",self.acupoint)
             height, width, channel = frame.shape  # 获取图像高度、宽度和通道数, 通常为为640x480x3
             # opencv获取的图像默认BGR格式
             # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # 转换BRG 到 RGB

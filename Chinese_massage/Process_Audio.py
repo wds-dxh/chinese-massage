@@ -2,7 +2,7 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-05-06 11:49:53
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-11 15:28:26
+LastEditTime: 2024-05-11 15:58:12
 FilePath: /Chinese_massage/Process_Audio.py
 Description: 使用YOLOv8模型检测人体关键点，用于穴位推拿，准确度很高。
 微信: 15310638214 
@@ -82,7 +82,7 @@ return {*}
 
 
 def thread_function(name1,name2,name3):     #定义一个线程函数，用于语音识别。name是检测病人的症状，从而判需要按摩的穴位
-    say_eng = pyttsx3.init() #初始化一个实例
+    # say_eng = pyttsx3.init() #初始化一个实例
     say_name1 = "你可以按揉凤池穴，请看位置"
     say_name2 = "你可以按揉肩中俞穴，请看位置"
     say_name3 = "你可以按揉心俞穴，请看位置"
@@ -90,24 +90,27 @@ def thread_function(name1,name2,name3):     #定义一个线程函数，用于�
     print("语音识别结果：",text)
     if name1 in text:
         print("鼻子")
-        say_eng.say(say_name1)  # say 用于传递要说的文本的方法
-        say_eng.runAndWait()  # 运行并处理语音命令
+        # say_eng.say(say_name1)  # say 用于传递要说的文本的方法
+        # say_eng.runAndWait()  # 运行并处理语音命令
+        os.system('say ' + say_name1)
         acupoint = 1
-        time.sleep(5)
+        # time.sleep(5)   
         return acupoint
     if name2 in text:
         print("咳嗽")
-        say_eng.say(say_name2)
-        say_eng.runAndWait()
+        # say_eng.say(say_name2)
+        # say_eng.runAndWait()
+        os.system('say ' + say_name2)
         acupoint = 2
-        time.sleep(5)
+        # time.sleep(5)
         return acupoint
     if name3 in text:
         print("失眠")
-        say_eng.say(say_name3)
-        say_eng.runAndWait()    
+        # say_eng.say(say_name3)
+        # say_eng.runAndWait()  
+        os.system('say ' + say_name3)  
         acupoint = 3
-        time.sleep(5)
+        # time.sleep(5)
         return acupoint
     else:
         print("未识别到病症")
@@ -146,6 +149,7 @@ def process_fram(model,frame,acupoint):
         pions_list = get_point.convert_pions(pions)
         if len(pions_list) == 0:
             return frame
+            print("未检测到关键点")
         # #画出所有关键点
         # for i in range(len(pions_list)):#是浮点数，需要转换成整数
         #     cv2.circle(frame, (int(pions_list[i][0]), int(pions_list[i][1])), 5, (0, 255, 255), -1)
@@ -157,13 +161,13 @@ def process_fram(model,frame,acupoint):
         #心俞穴
         Xinyu_Point_xy = [(pions_list[6][0]+pions_list[5][0])/2+30,(pions_list[11][1]-pions_list[5][1])/2+pions_list[5][1]]
         #根据语音识别结果，画出需要按摩的穴位
-        if acupoint == 1:
+        if int(acupoint) == 1:
             cv2.circle(frame, (int(Fengchi_Point_xy[0]), int(Fengchi_Point_xy[1])), 10, (0, 255, 0), -1)
             cv2.putText(frame, "Fengchi_Point_xy", (int(Fengchi_Point_xy[0]), int(Fengchi_Point_xy[1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        if acupoint == 2:
+        if int(acupoint) == 2:
             cv2.circle(frame, (int(Jianzhong_Point_xy[0]), int(Jianzhong_Point_xy[1])), 10, (0, 255, 0), -1)
             cv2.putText(frame, "Jianzhong_Point_xy", (int(Jianzhong_Point_xy[0]), int(Jianzhong_Point_xy[1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        if acupoint == 3:
+        if int(acupoint) == 3:
             cv2.circle(frame, (int(Xinyu_Point_xy[0]), int(Xinyu_Point_xy[1])), 10, (0, 255, 0), -1)
             cv2.putText(frame, "Xinyu_Point_xy", (int(Xinyu_Point_xy[0]), int(Xinyu_Point_xy[1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         # 计算FPS
@@ -179,7 +183,7 @@ if __name__ == "__main__":
     acupoint = 0
     while True:
         ret, frame = cap.read()
-        frame = process_fram(model,frame,acupoint)
+        frame = process_fram(model,frame,1)
         cv2.imshow("YOLOv8推理", frame)
         # 如果按下'q'则中断循环
         if cv2.waitKey(1) & 0xFF == ord("q"):
