@@ -41,18 +41,21 @@ def get_result():
 # text = ''
 def thread_readvoice():
     global text
-    if Read_voice.get_audio('音频.wav') == 0:       ##录音,并保存为音频.wav
-        print("录音失败")
-        return ''
-    text = get_result()
-    if text == '':
-        print("未识别到语音")
-        text = ''
-    return text
+    while True:
+        if Read_voice.get_audio('音频.wav') == 0:       ##录音,并保存为音频.wav
+            continue
+        text = get_result()
+        if text == None:
+            print("未识别到语音")
+            text = ''
+        return text
 if __name__ == '__main__':
     while True:
         text = thread_readvoice()
         print(text)
         if text == '退出':
             break
+
+
+
 

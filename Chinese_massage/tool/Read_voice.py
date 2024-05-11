@@ -2,8 +2,8 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-04-11 17:24:58
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-04-20 16:47:49
-FilePath: /Chinese_massage/Chinese_massage/tool/Read_voice.py
+LastEditTime: 2024-05-06 18:07:29
+FilePath: /Chinese_massage/tool/Read_voice.py
 Description:    读取音频文件
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 

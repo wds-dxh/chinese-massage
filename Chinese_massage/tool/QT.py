@@ -147,3 +147,4 @@ def display_text_window(get_text_function, font_size=20, timer_interval=2000):
 
 if __name__ == '__main__':
     display_text_window(get_text, font_size=30, timer_interval=3000)
+>>>>>>> 5224a952ad60d6b6af1c7b84be0b1eb5d3ed09d2
