@@ -2,8 +2,8 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-05-11 14:16:06
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-11 15:57:19
-FilePath: /Chinese_massage/main_qt.py
+LastEditTime: 2024-05-24 18:45:02
+FilePath: \Chinese_massage\main_qt.py
 Description: 
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
@@ -28,7 +28,7 @@ class AudioRecognitionThread(QThread):
     def run(self):
         acupoint = Process_Audio.thread_function("鼻子", "咳嗽", "失眠")
         acupoint_str = str(acupoint)  # 将结果转换为字符串
-        self.finished.emit(acupoint_str)
+        self.finished.emit(acupoint_str)#定义一个信号，将结果发送出去
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
     def btn_read_voice_click(self):
         # self.acupoint = Process_Audio.thread_function("鼻子","咳嗽","失眠")
         # print("穴位关键字：",self.acupoint)
-        self.audio_thread.start()
+        self.audio_thread.start()   # 开始语音识别线程
 
     def audio_recognition_finished(self, acupoint):
         self.acupoint = acupoint
@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
     def btn_camera_click(self):
         print("self.acupoint",self.acupoint)
         if not self.is_open_camera: # 按下 打开摄像头 按钮
-            self.video_cap = cv2.VideoCapture(0)  # 打开默认摄像头（索引为0）
+            self.video_cap = cv2.VideoCapture(1)  # 打开默认摄像头（索引为0）
             print('camera fps:', self.video_cap.get(cv2.CAP_PROP_FPS))
             # 每个20毫秒获取一次摄像头的图像进行刷新, 具体设置多少合适, 可以参考你的摄像头帧率cv2.CAP_PROP_FPS,
             # 刷新频率设置一个小于 1000 / cv2.CAP_PROP_FPS 的值即可
