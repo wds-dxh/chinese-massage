@@ -1,17 +1,17 @@
 '''
 Author: wds-dxh wdsnpshy@163.com
-Date: 2024-05-25 14:29:09
+Date: 2024-05-24 20:27:44
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-25 14:39:39
-FilePath: \CAIR\tool\kimi.py
+LastEditTime: 2024-05-31 19:25:50
+FilePath: /Chinese_massage/tool/kimi.py
 Description: 
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
 Copyright (c) 2024 by ${wds-dxh}, All Rights Reserved. 
 '''
-
 from openai import OpenAI
-#pip install openai -i https://pypi.tuna.tsinghua.edu.cn/simple
+#清华大学开源 pip install openai --index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
 class OpenAIChatClient:
     def __init__(self, api_key, model="moonshot-v1-8k", base_url="https://api.moonshot.cn/v1"):
         """
@@ -36,6 +36,7 @@ class OpenAIChatClient:
         :return: 返回模型的回答内容。
         """
         messages = [
+            {"role": "system", "content": "你是是医学咨询助手，基于医学知识为您提供专业的建议。同时，你可以提供一些通用的建议或简单的方法来帮助用户缓解症状，要求：所有的建议放在一行文字内！"},
             {"role": "user", "content": user_message},
         ]
 

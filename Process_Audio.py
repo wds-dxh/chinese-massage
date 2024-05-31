@@ -53,7 +53,6 @@ def thread_function(name1,name2,name3):     #定义一个线程函数，用于�
     say_name3 = "首先你可以按揉心俞穴，请看位置"
     text = AipSpeech.thread_readvoice()
     print("语音识别结果：",text)
-    response = chat_client.ask(text)
     if name1 in text:
         print("鼻子")
         # say_eng.say(say_name1)  # say 用于传递要说的文本的方法
@@ -85,9 +84,12 @@ def thread_function(name1,name2,name3):     #定义一个线程函数，用于�
         os.system('say ' + response)
         return acupoint
         
-    else:
+    if name1 not in text and name2 not in text and name3 not in text:
         print("未识别到病症")
         return 0
+    response = chat_client.ask(text)
+    os.system('say ' + response)
+
     
 
 
