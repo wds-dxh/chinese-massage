@@ -2,14 +2,13 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-05-11 14:16:06
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-31 17:19:51
-FilePath: /Chinese_massage/main_qt.py
+LastEditTime: 2024-05-24 22:22:30
+FilePath: /CAIR/main_qt.py
 Description: 
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
 Copyright (c) 2024 by ${wds-dxh}, All Rights Reserved. 
 '''
-# echo "**.DS_Store" >> .gitignore
 import sys
  
 from PyQt6 import QtCore
@@ -22,7 +21,7 @@ import Process_Audio
 import os
 os.environ['YOLO_VERBOSE'] = str(False)#不打印yolov8信息
 from ultralytics import YOLO
- 
+
 class AudioRecognitionThread(QThread):
     finished = pyqtSignal(str)
 
@@ -50,9 +49,18 @@ class MainWindow(QMainWindow):
         self.btn_read_voice.clicked.connect(self.btn_read_voice_click)
         top_widget = QWidget()  # 创建一个顶层窗口部件
         grid = QGridLayout()# 创建一个网格布局
-        grid.addWidget(self.lbl_img, 0, 0, Qt.AlignmentFlag.AlignTop)  # 放置顶部
-        grid.addWidget(self.btn_camera, 1, 0, Qt.AlignmentFlag.AlignBottom)  # 放置底部,Qt.AlignmentFlag.AlignBottom是指定按钮放在底部
-        grid.addWidget(self.btn_read_voice, 1, 1, Qt.AlignmentFlag.AlignBottom)
+        
+        # grid.addWidget(self.lbl_img, 0, 0, Qt.AlignmentFlag.AlignTop)  # 放置顶部
+        # grid.addWidget(self.btn_camera, 1, 0, Qt.AlignmentFlag.AlignBottom)  # 放置底部,Qt.AlignmentFlag.AlignBottom是指定按钮放在底部
+        # grid.addWidget(self.btn_read_voice, 1, 1, Qt.AlignmentFlag.AlignBottom)
+
+        # 在这里，将所有的控件都添加到布局中
+        grid.addWidget(self.lbl_img, 0, 0, 1, 2)  # 将图像显示标签占据第一行，跨越两列
+        grid.addWidget(self.btn_camera, 1, 0)  # 将打开摄像头按钮放在第二行第一列
+        grid.addWidget(self.btn_read_voice, 1, 1)  # 将语音识别按钮放在第二行第二列
+
+        # 然后，设置窗口的布局为你的 grid 布局
+        self.setLayout(grid)    
 
         top_widget.setLayout(grid)
         self.setCentralWidget(top_widget)   # 设置窗口的中心部件
@@ -82,7 +90,7 @@ class MainWindow(QMainWindow):
     def btn_camera_click(self):
         print("self.acupoint",self.acupoint)
         if not self.is_open_camera: # 按下 打开摄像头 按钮
-            self.video_cap = cv2.VideoCapture(1)  # 打开默认摄像头（索引为0）
+            self.video_cap = cv2.VideoCapture("./output.avi")  # 打开默认摄像头（索引为0）
             print('camera fps:', self.video_cap.get(cv2.CAP_PROP_FPS))
             # 每个20毫秒获取一次摄像头的图像进行刷新, 具体设置多少合适, 可以参考你的摄像头帧率cv2.CAP_PROP_FPS,
             # 刷新频率设置一个小于 1000 / cv2.CAP_PROP_FPS 的值即可
