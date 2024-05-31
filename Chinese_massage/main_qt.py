@@ -2,13 +2,14 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-05-11 14:16:06
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-24 18:45:02
-FilePath: \Chinese_massage\main_qt.py
+LastEditTime: 2024-05-31 17:19:51
+FilePath: /Chinese_massage/main_qt.py
 Description: 
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
 Copyright (c) 2024 by ${wds-dxh}, All Rights Reserved. 
 '''
+# echo "**.DS_Store" >> .gitignore
 import sys
  
 from PyQt6 import QtCore
