@@ -2,24 +2,13 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-05-06 11:49:53
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-24 20:40:22
-FilePath: /CAIR/Process_Audio.py
+LastEditTime: 2024-06-01 19:59:29
+FilePath: \chinese-massage\Process_Audio.py
 Description: 使用YOLOv8模型检测人体关键点，用于穴位推拿，准确度很高。
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
 Copyright (c) 2024 by ${wds-dxh}, All Rights Reserved. 
 '''
-import threading
-import pyttsx3      #pip install pyttsx3 -i https://pypi.tuna.tsinghua.edu.cn/simple
-import time         #pip install py3-tts -i https://pypi.tuna.tsinghua.edu.cn/simple
-import cv2
-import os
-os.environ['YOLO_VERBOSE'] = str(False)#不打印yolov8信息
-from ultralytics import YOLO
-
-from tool import AipSpeech
-from tool import get_point
-
 """
 交互内容:
 1.医生你好，我最近鼻塞，有点小感冒，眼睛也会胀痛。
@@ -31,21 +20,30 @@ from tool import get_point
 医生你好，我最近有点失眠，胸闷不舒服
 回答：你可以按揉心俞穴，请看位置
 """
-
-
-'''
-Author: wds-dxh wdsnpshy@163.com
-Date: 2024-05-06 11:58:41
-description: 语音识别，并判断有无穴位关键字，用于显示穴位推拿   
-param {*} name(穴位名称)
-return {*}
-'''
+import threading
+import pyttsx3      #pip install pyttsx3 -i https://pypi.tuna.tsinghua.edu.cn/simple
+import time         #pip install py3-tts -i https://pypi.tuna.tsinghua.edu.cn/simple
+import cv2
+import os
+os.environ['YOLO_VERBOSE'] = str(False)#不打印yolov8信息
+from ultralytics import YOLO
+from tool import AipSpeech
+from tool import get_point
 from tool.kimi import  OpenAIChatClient
+
+#如果是mac系统就使用say命令，播放语音。如果是windows系统就使用pyttsx3库播放语音
+OS_name = os.name
+if OS_name == 'nt':     #windows系统  
+    global engine
+    engine = pyttsx3.init()
+    
 
 api_key = "sk-afn5NxpCGr8PqEeCdkDQ4XYTWNv7BZFxCeE14WAdJudv5k6l"
 model = "moonshot-v1-8k"    
 base_url = "https://api.moonshot.cn/v1"
 chat_client = OpenAIChatClient(api_key, model, base_url)
+
+
 def thread_function(name1,name2,name3):     #定义一个线程函数，用于语音识别。name是检测病人的症状，从而判需要按摩的穴位
     # say_eng = pyttsx3.init() #初始化一个实例
     say_name1 = "首先你可以按揉凤池穴，请看位置"
@@ -57,43 +55,72 @@ def thread_function(name1,name2,name3):     #定义一个线程函数，用于�
         print("鼻子")
         # say_eng.say(say_name1)  # say 用于传递要说的文本的方法
         # say_eng.runAndWait()  # 运行并处理语音命令
-        os.system('say ' + say_name1)
+        if OS_name == 'nt':
+            engine.say(say_name1)
+            engine.runAndWait()
+        else:
+            os.system('say ' + say_name1)
         acupoint = 1
         time.sleep(3) 
         response = chat_client.ask(text)
-        os.system('say ' + response)  
+        if OS_name == 'nt':
+            engine.say(response)
+            engine.runAndWait()
+        else:
+            os.system('say ' + response)  
         return acupoint
     if name2 in text:
         print("咳嗽")
         # say_eng.say(say_name2)
         # say_eng.runAndWait()
-        os.system('say ' + say_name2)
+        if OS_name == 'nt':
+            engine.say(say_name2)
+            engine.runAndWait()
+        else:
+            os.system('say ' + say_name2)
         acupoint = 2
         time.sleep(3)
         response = chat_client.ask(text)
-        os.system('say ' + response)
+        if OS_name == 'nt':
+            engine.say(response)
+            engine.runAndWait()
+        else:
+            os.system('say ' + response)
         return acupoint
     if name3 in text:
         print("失眠")
         # say_eng.say(say_name3)
         # say_eng.runAndWait()  
-        os.system('say ' + say_name3)  
+        if OS_name == 'nt':
+            engine.say(say_name3)
+            engine.runAndWait()
+        else:
+            os.system('say ' + say_name3)  
         acupoint = 3
         time.sleep(3)
         response = chat_client.ask(text)
-        os.system('say ' + response)
+        if OS_name == 'nt':
+            engine.say(response)
+            engine.runAndWait()
+        else:
+            os.system('say ' + response)
         return acupoint
-        
-    if name1 not in text and name2 not in text and name3 not in text:
+    # 
+    else:
+        print("未识别到病症")
+        response = chat_client.ask(text)
+        if OS_name == 'nt':
+            print(response+"windows")
+            engine.say(response)
+            engine.runAndWait()
+        else:   
+            os.system('say ' + response)    
+        # if name1 not in text and name2 not in text and name3 not in text:
         print("未识别到病症")
         return 0
-    response = chat_client.ask(text)
-    os.system('say ' + response)
-
     
 
-
-
+    
 def process_fram(model,frame,acupoint):
     start_time = time.time()
     # w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))

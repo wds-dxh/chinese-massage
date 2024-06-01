@@ -2,15 +2,14 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-05-11 14:16:06
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-05-24 22:22:30
-FilePath: /CAIR/main_qt.py
+LastEditTime: 2024-06-01 20:06:53
+FilePath: \chinese-massage\main_qt.py
 Description: 
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
 Copyright (c) 2024 by ${wds-dxh}, All Rights Reserved. 
 '''
 import sys
- 
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QPushButton, QWidget
@@ -21,7 +20,6 @@ import Process_Audio
 import os
 os.environ['YOLO_VERBOSE'] = str(False)#不打印yolov8信息
 from ultralytics import YOLO
-
 class AudioRecognitionThread(QThread):
     finished = pyqtSignal(str)
 
@@ -60,7 +58,7 @@ class MainWindow(QMainWindow):
         grid.addWidget(self.btn_read_voice, 1, 1)  # 将语音识别按钮放在第二行第二列
 
         # 然后，设置窗口的布局为你的 grid 布局
-        self.setLayout(grid)    
+        # self.setLayout(grid)    
 
         top_widget.setLayout(grid)
         self.setCentralWidget(top_widget)   # 设置窗口的中心部件
