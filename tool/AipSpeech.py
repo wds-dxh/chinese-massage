@@ -2,8 +2,8 @@
 Author: wds-dxh wdsnpshy@163.com
 Date: 2024-04-20 16:46:03
 LastEditors: wds-dxh wdsnpshy@163.com
-LastEditTime: 2024-04-20 17:27:51
-FilePath: /Chinese_massage/Chinese_massage/tool/AipSpeech.py
+LastEditTime: 2024-06-19 10:06:36
+FilePath: /chinese-massage/tool/AipSpeech.py
 Description: 
 微信: 15310638214 
 邮箱：wdsnpshy@163.com 
@@ -20,9 +20,9 @@ from tool import Read_voice
 
 
 """ 你的 APPID AK SK """
-APP_ID = '43993838'
-API_KEY = 'h1rvZsv5hm8UrRKhAyUiyjE3'
-SECRET_KEY = 'K8UZLTec6xu9zqlHOQdEHhWysQLOcZ8z'
+APP_ID = '84368232'
+API_KEY = 'JbvSnXC3o8Ipv1pOLCRXKdzD'
+SECRET_KEY = 'HgS9gIBN2qbMzh6hi8OfLjJMDhenYdQc'
 
 client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)#创建一个客户端用以访问百度云
 # 读取文件
